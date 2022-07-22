@@ -51,6 +51,5 @@ public class CategoryResource {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         categoryService.delete(id);
         return ResponseEntity.noContent().build();
-
     }
 }
