@@ -46,7 +46,7 @@ public class ProductService {
         Product entity = new Product();
         copyDtoToEntity(dto, entity);
         entity = productRepository.save(entity);
-        return new ProductDto(entity);
+        return new ProductDto(entity, entity.getCategories());
     }
 
     @Transactional
