@@ -2,7 +2,6 @@ package com.devsuperior.dscatalog.repositories;
 
 import com.devsuperior.dscatalog.entities.Product;
 import com.devsuperior.dscatalog.factories.ProductFactory;
-import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,11 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 class ProductRepositoryTest {
@@ -21,11 +24,10 @@ class ProductRepositoryTest {
 
     private long existingId;
     private long nonExistingId;
-
     private long countTotalProducts;
 
     @BeforeEach
-    void setup() throws Exception {
+    void setup() {
         existingId = 1L;
         nonExistingId = 1000L;
         countTotalProducts = 25L;
@@ -44,9 +46,7 @@ class ProductRepositoryTest {
     @Test
     public void deleteShouldThrowEmptyResultDataAccessExceptionWhenIdDoesNotExist() {
 
-        assertThrows(EmptyResultDataAccessException.class, () -> {
-           productRepository.deleteById(nonExistingId);
-        });
+        assertThrows(EmptyResultDataAccessException.class, () -> productRepository.deleteById(nonExistingId));
 
     }
 
