@@ -41,18 +41,16 @@ public class ProductResourceTest {
     private ProductService productService;
 
     private ProductDto productDto;
-    private PageImpl<ProductDto> page;
     private Long existingId;
     private Long nonExistingId;
-    private Long dependentId;
 
     @BeforeEach
     void setup() {
         existingId = 1L;
         nonExistingId = 2L;
-        dependentId = 3L;
+        Long dependentId = 3L;
         productDto = ProductFactory.createProductDto();
-        page = new PageImpl<>(List.of(productDto));
+        PageImpl<ProductDto> page = new PageImpl<>(List.of(productDto));
         when(productService.findAllPaged(any())).thenReturn(page);
         when(productService.findById(existingId)).thenReturn(productDto);
         when(productService.findById(nonExistingId)).thenThrow(ResourceNotFoundException.class);
