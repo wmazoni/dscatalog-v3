@@ -21,20 +21,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.Instant;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 public class ProductServiceTest {
@@ -51,6 +43,8 @@ public class ProductServiceTest {
     private long existingId;
     private long nonExistingId;
     private long dependentId;
+    private ProductDto productDto;
+    private Double priceChanged;
 
     @BeforeEach
     void setup() {
@@ -59,15 +53,19 @@ public class ProductServiceTest {
         dependentId = 3L;
         Product product = ProductFactory.createProduct();
         PageImpl<Product> page = new PageImpl<>(List.of(product));
+        productDto = ProductFactory.createProductDto();
+        priceChanged = 500.0;
 
         when(productRepository.findAll((Pageable) any())).thenReturn(page);
         when(productRepository.save(any())).thenReturn(product);
         when(productRepository.findById(existingId)).thenReturn(Optional.of(product));
         when(productRepository.findById(nonExistingId)).thenReturn(Optional.empty());
+        when(productRepository.getOne(existingId)).thenReturn(product);
         when(categoryRepository.getOne(any())).thenReturn(new Category(2L, "Electronics"));
         doNothing().when(productRepository).deleteById(existingId);
         doThrow(EmptyResultDataAccessException.class).when(productRepository).deleteById(nonExistingId);
         doThrow(DataIntegrityViolationException.class).when(productRepository).deleteById(dependentId);
+        doThrow(EntityNotFoundException.class).when(productRepository).getOne(nonExistingId);
     }
 
     @Test
@@ -96,11 +94,28 @@ public class ProductServiceTest {
 
     @Test
     public void insertShouldAddNewObject() {
-        ProductDto productDto = ProductFactory.createProductDto();
-
         ProductDto result = productService.insert(productDto);
 
         assertEquals(1L, result.getId());
+
+    }
+
+    @Test
+    public void updateShouldUpdateAnObject() {
+        productDto.setPrice(priceChanged);
+
+        ProductDto result = productService.update(1L, productDto);
+
+        assertEquals(500.0, result.getPrice());
+    }
+
+    @Test
+    public void updateShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
+        productDto.setPrice(priceChanged);
+
+        assertThrows(ResourceNotFoundException.class, () -> productService.update(nonExistingId, productDto));
+
+        verify(productRepository, times(1)).getOne(nonExistingId);
 
     }
 
