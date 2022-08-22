@@ -2,6 +2,7 @@ package com.devsuperior.dscatalog.resources;
 
 import com.devsuperior.dscatalog.dto.ProductDto;
 import com.devsuperior.dscatalog.factories.ProductFactory;
+import com.devsuperior.dscatalog.utils.TokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,22 +30,34 @@ public class ProductResourceIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private TokenUtil tokenUtil;
+
     private Long existingId;
     private Long nonExistingId;
     private Long countTotalProducts;
 
+    private String accessToken;
+
     @BeforeEach
-    void setup() {
+    void setUp() throws Exception {
         existingId = 1L;
         nonExistingId = 1000L;
         countTotalProducts = 25L;
 
+        String operatorUsername = "alex@gmail.com";
+        String operatorPassword = "123456";
+
+        accessToken = tokenUtil.obtainAccessToken(mockMvc, operatorUsername, operatorPassword);
     }
 
     @Test
     public void findAllShouldReturnSortedPageWhenSortByName() throws Exception {
-        ResultActions result = mockMvc.perform(get("/products?page=0&sort=name,asc")
-                .accept(MediaType.APPLICATION_JSON));
+
+        ResultActions result =
+                mockMvc.perform(get("/products?page=0&size=12&sort=name,asc")
+                        .accept(MediaType.APPLICATION_JSON));
+
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.totalElements").value(countTotalProducts));
         result.andExpect(jsonPath("$.content").exists());
@@ -54,17 +67,21 @@ public class ProductResourceIT {
     }
 
     @Test
-    public void updateShouldReturnProductDtoWhenIdExist() throws Exception {
+    public void updateShouldReturnProductDTOWhenIdExists() throws Exception {
 
         ProductDto productDto = ProductFactory.createProductDto();
-        String expectedName = productDto.getName();
-        String expectedDescription = productDto.getDescription();
         String jsonBody = objectMapper.writeValueAsString(productDto);
 
-        ResultActions result = mockMvc.perform(put("/products/{id}", existingId)
-                .content(jsonBody)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON));
+        String expectedName = productDto.getName();
+        String expectedDescription = productDto.getDescription();
+
+        ResultActions result =
+                mockMvc.perform(put("/products/{id}", existingId)
+                        .header("Authorization", "Bearer " + accessToken)
+                        .content(jsonBody)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON));
+
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.id").value(existingId));
         result.andExpect(jsonPath("$.name").value(expectedName));
@@ -72,15 +89,18 @@ public class ProductResourceIT {
     }
 
     @Test
-    public void updateShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() throws Exception {
-        ProductDto productDto = ProductFactory.createProductDto();
+    public void updateShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
 
-        String jsonBody = objectMapper.writeValueAsString(productDto);
+        ProductDto productDTO = ProductFactory.createProductDto();
+        String jsonBody = objectMapper.writeValueAsString(productDTO);
 
-        ResultActions result = mockMvc.perform(put("/products/{id}", nonExistingId)
-                .content(jsonBody)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON));
+        ResultActions result =
+                mockMvc.perform(put("/products/{id}", nonExistingId)
+                        .header("Authorization", "Bearer " + accessToken)
+                        .content(jsonBody)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON));
+
         result.andExpect(status().isNotFound());
     }
 }
