@@ -20,8 +20,11 @@ public class ProductResource {
     private ProductService productService;
 
     @GetMapping
-    public ResponseEntity<Page<ProductDto>> findAll(Pageable pageable) {
-        Page<ProductDto> list = productService.findAllPaged(pageable);
+    public ResponseEntity<Page<ProductDto>> findAll(
+            @RequestParam(value = "categoryId", defaultValue = "0") Long categoryId,
+            @RequestParam(value = "name", defaultValue = "") String name,
+            Pageable pageable) {
+        Page<ProductDto> list = productService.findAllPaged(categoryId, name.trim(), pageable);
         return ResponseEntity.ok().body(list);
     }
 
