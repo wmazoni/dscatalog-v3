@@ -60,6 +60,7 @@ public class ProductServiceTest {
         when(productRepository.save(any())).thenReturn(product);
         when(productRepository.findById(existingId)).thenReturn(Optional.of(product));
         when(productRepository.findById(nonExistingId)).thenReturn(Optional.empty());
+        when(productRepository.find(any(), any(), any())).thenReturn(page);
         when(productRepository.getOne(existingId)).thenReturn(product);
         when(categoryRepository.getOne(any())).thenReturn(new Category(2L, "Electronics"));
         doNothing().when(productRepository).deleteById(existingId);
@@ -71,10 +72,9 @@ public class ProductServiceTest {
     @Test
     public void findAllPagedShouldReturnPage() {
         Pageable pageable = PageRequest.of(0, 10);
-        Page<ProductDto> result = productService.findAllPaged(pageable);
+        Page<ProductDto> result = productService.findAllPaged(0L, "", pageable);
 
         assertNotNull(result);
-        verify(productRepository, times(1)).findAll(pageable);
     }
 
     @Test
