@@ -1,0 +1,18 @@
+language: java
+jdk:
+  - openjdk11
+before_install:
+  - cd backend
+  - chmod +x mvnw
+  - ./mvnw clean package
+script:
+  - docker build -t dscatalog:latest .
+before_deploy:
+  echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USER" --password-stdin
+deploy:
+  provider: script
+  script:
+    docker tag dscatalog:latest $DOCKERHUB_USER/dscatalog:latest;
+    docker push $DOCKERHUB_USER/dscatalog;
+  on:
+    branch: main
