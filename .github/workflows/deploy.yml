@@ -38,9 +38,10 @@ jobs:
           MAVEN_OPTS: "-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
 
       - name: Update container image
-        run: echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USER" --password-stdin
-        run: docker build -t dscatalog:latest . --file Dockerfile --tag dscatalog:latest
-        run: docker push $DOCKERHUB_USER/dscatalog
+        run: |
+         echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USER" --password-stdin
+         docker build -t dscatalog:latest . --file Dockerfile --tag dscatalog:latest
+         docker push $DOCKERHUB_USER/dscatalog
         working-directory: backend
 
       - run: echo "done build project and upload container image"
