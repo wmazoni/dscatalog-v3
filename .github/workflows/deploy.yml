@@ -54,7 +54,6 @@ jobs:
         with:
           git_remote_url: 'ssh://dokku@142.93.206.108:22/dscatalog-v3'
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          working-directory: backend
-          run: git push dokku main:master
+          branch: main
 
       - run: echo "done build project and upload container image"
