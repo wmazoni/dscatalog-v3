@@ -43,5 +43,16 @@ jobs:
          docker tag dscatalog:latest $DOCKERHUB_USER/dscatalog:latest
          docker push $DOCKERHUB_USER/dscatalog
         working-directory: backend
+        
+      - name: Cloning repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Push to dokku
+        uses: dokku/github-action@master
+        with:
+          git_remote_url: 'ssh://dokku@142.93.206.108:22/dscatalog-v3'
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }} 
 
       - run: echo "done build project and upload container image"
