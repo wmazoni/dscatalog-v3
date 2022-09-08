@@ -3,7 +3,7 @@ name: Build and Update Container Image
 on:
   push:
     branches:
-      - 'main'
+      - main
 
 jobs:
   build:
