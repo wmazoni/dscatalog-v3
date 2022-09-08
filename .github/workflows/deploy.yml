@@ -40,7 +40,7 @@ jobs:
         run: |
          echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USER" --password-stdin
          docker build -t dscatalog:latest . --file Dockerfile --tag dscatalog:latest
-         docker push dscatalog/latest
+         docker push latest
         working-directory: backend
 
       - run: echo "done build project and upload container image"
