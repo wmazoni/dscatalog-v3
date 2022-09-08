@@ -22,7 +22,6 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '11'
-      - run: java-version
 
       - name: Cache Maven packages
         uses: actions/cache@v2
