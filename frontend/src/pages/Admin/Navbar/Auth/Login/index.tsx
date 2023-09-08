@@ -45,7 +45,7 @@ const Login = () => {
               }
             })}
             type="text"
-            className="form-control base-input"
+            className="form-control base-input is-invalid"
             placeholder="Email"
             name="username"
           />
