@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import ButtonIcon from 'components/ButtonIcon';
 import { useForm } from 'react-hook-form';
 import './styles.css';
-import { requestBackendLogin } from 'util/request';
+import { getAuthData, requestBackendLogin, saveAuthData } from 'util/request';
 import { useState } from 'react';
 
 type FormData = {
@@ -16,6 +16,9 @@ const Login = () => {
   const onSubmit = (formData: FormData) => {
     requestBackendLogin(formData)
       .then((response) => {
+        saveAuthData(response.data)
+        const token = getAuthData().access_token
+        console.log('TOKEN gerado: ' + token)
         setHasError(false);
         console.log('SUCESSO', response);
       })
@@ -45,7 +48,7 @@ const Login = () => {
               }
             })}
             type="text"
-            className="form-control base-input is-invalid"
+            className={`form-control base-input ${errors.username ? 'is-invalid' : ''}`}
             placeholder="Email"
             name="username"
           />
@@ -57,7 +60,7 @@ const Login = () => {
               required: 'Campo obrigatório'
             })}
             type="password"
-            className="form-control base-input "
+            className={`form-control base-input ${errors.password ? 'is-invalid' : ''} `}
             placeholder="Password"
             name="password"
           />
