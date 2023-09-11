@@ -40,7 +40,7 @@ const Login = () => {
             {...register('username', {
               required: 'Campo obrigatório',
               pattern: {
-                value: /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$/i,
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                 message: 'Email inválido'
               }
             })}
