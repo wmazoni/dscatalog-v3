@@ -4,7 +4,7 @@ import Navbar from 'components/Navbar';
 import Catalog from 'pages/Catalog';
 import Admin from 'pages/Admin';
 import ProductDetails from 'pages/ProductDetails';
-import Auth from 'pages/Admin/Navbar/Auth';
+import Auth from 'pages/Admin/Auth';
 
 const Routes = () => (
   <BrowserRouter>
