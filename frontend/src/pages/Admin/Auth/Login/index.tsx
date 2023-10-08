@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import ButtonIcon from 'components/ButtonIcon';
 import { useForm } from 'react-hook-form';
 import './styles.css';
-import { getAuthData, requestBackendLogin, saveAuthData } from 'util/request';
+import { getAuthData, requestBackendLogin, saveAuthData } from 'util/requests';
 import { useState } from 'react';
 
 type FormData = {

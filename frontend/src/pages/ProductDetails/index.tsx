@@ -5,7 +5,7 @@ import './styles.css';
 import { useState, useEffect } from 'react';
 import { Product } from 'types/product';
 import axios from 'axios';
-import { BASE_URL } from 'util/request';
+import { BASE_URL } from 'util/requests';
 import ProductInfoLoader from './ProductInfoLoader';
 import ProductDetailsLoader from './ProductDetailsLoader';
 

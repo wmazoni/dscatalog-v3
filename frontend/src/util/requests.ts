@@ -1,5 +1,5 @@
 import qs from 'qs'
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 
 type LoginResponse = {
     "access_token": string,
@@ -38,4 +38,12 @@ export const saveAuthData = (obj : LoginResponse) => {
 export const getAuthData = () => {
     const str = localStorage.getItem(tokenKey) ?? "{}"
     return JSON.parse(str) as LoginResponse
+}
+
+export const requestBackend = (config: AxiosRequestConfig) => {
+    const headers = config.withCredentials ? {
+        ...config.headers,
+        Authorization: "Bearer " + getAuthData().access_token
+    } : config.headers;
+    return axios({...config, baseURL: BASE_URL, headers})
 }
