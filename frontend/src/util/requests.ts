@@ -1,5 +1,6 @@
 import qs from 'qs'
 import axios, { AxiosRequestConfig } from 'axios'
+import history from './history'
 
 type LoginResponse = {
     "access_token": string,
@@ -47,3 +48,19 @@ export const requestBackend = (config: AxiosRequestConfig) => {
     } : config.headers;
     return axios({...config, baseURL: BASE_URL, headers})
 }
+
+// Add a request interceptor
+axios.interceptors.request.use(function (config) {
+    return config;
+  }, function (error) {
+    return Promise.reject(error);
+  });
+
+axios.interceptors.response.use(function (response) {
+    return response;
+  }, function (error) {
+    if (error.response.status === 401 || error.response.status === 403) {
+        history.push('/admin/auth')
+    }
+    return Promise.reject(error);
+  });
