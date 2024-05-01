@@ -5,15 +5,11 @@ import { useContext, useEffect } from 'react';
 
 import { Link, NavLink } from 'react-router-dom';
 import history from 'util/history';
-import {
-  getTokenData,
-  isAuthenticated,
-  removeAuthData,
-} from 'util/requests';
+import { getTokenData, isAuthenticated } from 'util/auth';
+import { removeAuthData } from 'util/storage';
 
 const Navbar = () => {
-
-  const {authContextData, setAuthContextData} = useContext(AuthContext)
+  const { authContextData, setAuthContextData } = useContext(AuthContext);
 
   useEffect(() => {
     if (isAuthenticated()) {
@@ -74,10 +70,12 @@ const Navbar = () => {
           </ul>
         </div>
 
-        <div className='nav-login-logout'>
+        <div className="nav-login-logout">
           {authContextData.authenticated ? (
             <>
-              <span className='nav-username'>{authContextData.tokenData?.user_name}</span>
+              <span className="nav-username">
+                {authContextData.tokenData?.user_name}
+              </span>
               <Link to="#logout" onClick={handleLogoutClick}>
                 LOGOUT
               </Link>
