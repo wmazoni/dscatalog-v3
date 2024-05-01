@@ -16,7 +16,7 @@ const Admin = () => {
           <PrivateRoute path="/admin/categories">
             <h1>Product CRUD</h1>
           </PrivateRoute>
-          <PrivateRoute path="/admin/users">
+          <PrivateRoute path="/admin/users" roles={['ROLE_ADMIN']}>
             <User />
           </PrivateRoute>
         </Switch>
